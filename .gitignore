@@ -1,0 +1,6 @@
+backend/fruit_app/.idea
+backend/fruit_app/venv
+backend/fruit_app/db.sqlite3
+backend/fruit_app/media
+price_forecasting/.ipynb_checkpoints
+vegetable_price_prediction/.ipynb_checkpoints
