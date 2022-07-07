@@ -17,6 +17,8 @@ import numpy as np
 FRESH_STALE_LABELS = ['fresh_apple', 'fresh_banana', 'fresh_bitter_gourd', 'fresh_capsicum', 'fresh_orange', 'fresh_tomato', 'stale_apple', 'stale_banana', 'stale_bitter_gourd', 'stale_capsicum', 'stale_orange', 'stale_tomato']
 FRUIT_CLASSIFICATION_LABELS = ['Banana', 'Mango', 'Papaya', 'Watermelon']
 EDIBILITY_CLASSIFICATION_LABELS = ['Not_edible', 'edible']
+DISEASE_LABELS = ['Anthracnose', 'Black_rot_canker', 'Mold', 'Scab', 'Sooty_blotch']
+RIPENED_METHOD_LABELS = ['Artificial', 'Natural']
 
 
 def get_processed_input_img(image_path, size=224):
@@ -72,7 +74,7 @@ def get_predictions(image, model_path, labels, num_of_predictions):
     sorted_preds = [labels[i] for i in best]
 
     context = {
-        'top_3_predictions': sorted_preds[:num_of_predictions],
+        'top_n_predictions': sorted_preds[:num_of_predictions],
         'probabilities': [pred[0][i] for i in best[:num_of_predictions]]
     }
 
@@ -93,7 +95,7 @@ class FreshStaleFruitAPIView(APIView):
 
 
         context = {
-            'top_3_predictions': predictions['top_3_predictions'],
+            'top_n_predictions': predictions['top_n_predictions'],
             'probabilities': predictions['probabilities']
         }
 
@@ -110,14 +112,31 @@ class FruitClassificationAPIView(APIView):
         predictions = get_predictions(image_file, model_path, FRUIT_CLASSIFICATION_LABELS, 1)
 
         context = {
-            'top_3_predictions': predictions['top_3_predictions'],
+            'top_n_predictions': predictions['top_n_predictions'],
             'probabilities': predictions['probabilities']
         }
 
         return Response(context, status=status.HTTP_200_OK)
 
 
-class EEdibilityAPIView(APIView):
+class DiseasePredictionAPIView(APIView):
+    """ Disease identification ['Anthracnose', 'Black_rot_canker', 'Mold', 'Scab', 'Sooty_blotch'] """
+
+    def post(self, request, *args, **kwargs):
+        image_file = request.FILES['image']
+
+        model_path = 'api/trained_models/fruit_diseases_check_trained_model.h5'
+        predictions = get_predictions(image_file, model_path, DISEASE_LABELS, 3)
+
+        context = {
+            'top_n_predictions': predictions['top_n_predictions'],
+            'probabilities': predictions['probabilities']
+        }
+
+        return Response(context, status=status.HTTP_200_OK)
+
+
+class EdibilityAPIView(APIView):
     """ Edibility classification """
 
     def post(self, request, *args, **kwargs):
@@ -127,7 +146,24 @@ class EEdibilityAPIView(APIView):
         predictions = get_predictions(image_file, model_path, EDIBILITY_CLASSIFICATION_LABELS, 1)
 
         context = {
-            'top_3_predictions': predictions['top_3_predictions'],
+            'top_n_predictions': predictions['top_n_predictions'],
+            'probabilities': predictions['probabilities']
+        }
+
+        return Response(context, status=status.HTTP_200_OK)
+
+
+class RipenedMethodPredictionAPIView(APIView):
+    """ Ripened method identification ['Artificial', 'Natural'] """
+
+    def post(self, request, *args, **kwargs):
+        image_file = request.FILES['image']
+
+        model_path = 'api/trained_models/fruit_ripened_method_trained_model.h5'
+        predictions = get_predictions(image_file, model_path, RIPENED_METHOD_LABELS, 1)
+
+        context = {
+            'top_n_predictions': predictions['top_n_predictions'],
             'probabilities': predictions['probabilities']
         }
 
