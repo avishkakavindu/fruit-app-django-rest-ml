@@ -10,5 +10,8 @@ urlpatterns = [
     path('fruit-classification/', FruitClassificationAPIView.as_view(), name='fruit_classification'),
     path('edibility-prediction/', EdibilityAPIView.as_view(), name='edibility_prediction'),
     path('disease-prediction/', DiseasePredictionAPIView.as_view(), name='disease_prediction'),
-    path('ripened-method-prediction/', RipenedMethodPredictionAPIView.as_view(), name='ripened_method_prediction')
+    path('ripened-method-prediction/', RipenedMethodPredictionAPIView.as_view(), name='ripened_method_prediction'),
+    path('grade/', GradingAPIView.as_view(), name='grading'),
+    path('fruit-price-prediction/', FruitPricePredictionAPIView.as_view(), name='fruit_price_prediction'),
+    path('price-forecast/', PriceTimeSeriesAPIView.as_view(), name='price_forecast'),
 ]
